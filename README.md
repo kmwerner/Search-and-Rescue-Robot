@@ -1,5 +1,5 @@
-# Search-and-Rescue-Robot
-EE101 Final Project
+## Search-and-Rescue-Robot
+#EE101 Final Project
 
 In this project you will use the robot platform to create an electro-mechanical search & 
 rescue robot. The robot must be able to navigate through a series of obstacles (i.e. a 
@@ -43,12 +43,12 @@ be available.
 Note: While some information related to the project may be discussed in class there is 
 no plan to provide significant detail for every aspect of the project during class time. 
 
-Grading 
+##Grading 
   There are several components of the project. Each component is weighted as shown in 
     the table below. Each team member will receive the same grade with the exception of 
     teamwork. 
  
-Solution (i.e. does the robot rescue the victim): 
+#Solution (i.e. does the robot rescue the victim): 
   There are three different colored blocks on the other side of the 
     obstacle. Only the blue block is to be rescued (i.e. pushed off of 
     the robot area oval). No other blocks may be removed from the 
@@ -62,7 +62,7 @@ Solution (i.e. does the robot rescue the victim):
 (25 maximum) 
 
  
-Code / Algorithm: 
+#Code / Algorithm: 
   Was structured coding techniques used? 
   Is the code readable? 
     o Is there good documentation in the code?  
@@ -79,7 +79,7 @@ Code / Algorithm:
 (25 maximum) 
 
  
-Mechanical “Soundness” 
+#Mechanical “Soundness” 
   Is the robot put together well? 
   Is it neat? Is it self-contained? Is it stable? 
 
@@ -87,7 +87,7 @@ Mechanical “Soundness”
 (10 maximum) 
 
  
-Evidence of Teamwork 
+#Evidence of Teamwork 
   Is there significant information indicating that all members of the 
     team participated in the overall project? 
   During the presentation and periodic project quiz evaluations, it 
@@ -97,7 +97,7 @@ Evidence of Teamwork
  
 (15 maximum) 
 
-Oral Presentation 
+#Oral Presentation 
   Is there a block diagram? 
   Is there a flow chart showing the algorithm? 
   Length (not too long / not too short)? 
@@ -111,7 +111,7 @@ Oral Presentation
 (15 maximum) 
 
  
-Extra Features 
+#Extra Features 
   Any innovative or unique features incorporated in the solution? 
     o e.g. additional sensors or other features that make the teams’ 
       solution stand out from the others 
@@ -120,7 +120,7 @@ Extra Features
  
 (10 maximum) 
 
-Project Description 
+##Project Description 
 You will create a robot that can navigate through an obstacle (i.e. a tunnel of sorts) and 
 find a blue block and push it out of the oval robot arena using your own robot platform 
 that is controlled by an Arduino (also supplied by you). Figure 1 illustrates a typical bare 
@@ -146,7 +146,7 @@ There are three different colored blocks that the robot may encounter – red, g
 blue. Only the blue block is to be pushed out of the oval arena. Neither of the other two 
 blocks may be disturbed. 
  
-Procedure 
+#Procedure 
 Unlike other labs you have done in this course, the project is somewhat open ended in 
 that you, as an engineering student, will provide the entire solution. All algorithms, 
 code, electrical connections, mechanical assembly, etc. are to be developed and 
