@@ -1,17 +1,28 @@
 #define MOTOR1 3
 #define MOTOR2 5
 
-void forward(value) {
-  int value = 0;
+void forward(int value) {
   digitalWrite(MOTOR1, HIGH);
   digitalWrite(MOTOR2, HIGH);
   analogWrite(MOTOR1, value);
   analogWrite(MOTOR2, value);
 }
-void backward(value) {
-  int value = 0;
+void backward(int value) {
   digitalWrite(MOTOR1, LOW);
   digitalWrite(MOTOR2, LOW);
+  analogWrite(MOTOR1, value);
+  analogWrite(MOTOR2, value);
+}
+void turn_left(int value) {
+  digitalWrite(MOTOR1, HIGH); 
+  digitalWrite(MOTOR2, LOW); 
+  analogWrite(MOTOR1, value);
+  analogWrite(MOTOR2, value);
+}
+
+void turn_right(int value) {
+  digitalWrite(MOTOR1, LOW); 
+  digitalWrite(MOTOR2, HIGH); 
   analogWrite(MOTOR1, value);
   analogWrite(MOTOR2, value);
 }
@@ -30,19 +41,13 @@ void loop() {
   digitalWrite(MOTOR2, HIGH); // right wheel
   analogWrite(MOTOR2, 126);
   delay(1000);
-  forward(126); // both wheels move forward
+  forward(126); 
   delay(1000);
-  backward(126); // both wheels move backward
+  backward(126); 
   delay(1000);
-  digitalWrite(MOTOR1, HIGH); // left moves forward
-  digitalWrite(MOTOR2, LOW);  // right moves backward
-  analogWrite(MOTOR1, 126);
-  analogWrite(MOTOR2, 126);
+  turn_left(126);
   delay(1000);
-  digitalWrite(MOTOR1, LOW); // left moves backward
-  digitalWrite(MOTOR2, HIGH); // right moves forward
-  analogWrite(MOTOR1, 126);
-  analogWrite(MOTOR2, 126);
+  turn_right(126);
   delay(1000);
   forward(255); // max forward speed
   delay(1000);
