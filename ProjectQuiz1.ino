@@ -1,56 +1,31 @@
 #define MOTOR1 3
 #define MOTOR2 5
 
-void forward(int value) {
-  digitalWrite(MOTOR1, HIGH);
-  digitalWrite(MOTOR2, HIGH);
-  analogWrite(MOTOR1, value);
-  analogWrite(MOTOR2, value);
-}
-void backward(int value) {
-  digitalWrite(MOTOR1, LOW);
-  digitalWrite(MOTOR2, LOW);
-  analogWrite(MOTOR1, value);
-  analogWrite(MOTOR2, value);
-}
-void turn_left(int value) {
-  digitalWrite(MOTOR1, HIGH); 
-  digitalWrite(MOTOR2, LOW); 
-  analogWrite(MOTOR1, value);
-  analogWrite(MOTOR2, value);
+void drive(byte left, byte right, bool debug = false) {
+  //generic 'drive' command that drives each motor to the
+  //value specified. Input is a byte (0-255)
+  analogWrite(MOTOR1, left); //drives Motor1 to value 'left'
+  analogWrite(MOTOR2, right); //drives MOTOR2 to value 'right'
+  if(debug){ //prints debug information if flagged to do so
+    Serial.print("Driving Motor1:");
+    Serial.print(left);
+    Serial.print("  Motor2:");
+    Serial.println(right);
+  }
 }
 
-void turn_right(int value) {
-  digitalWrite(MOTOR1, LOW); 
-  digitalWrite(MOTOR2, HIGH); 
-  analogWrite(MOTOR1, value);
-  analogWrite(MOTOR2, value);
+void drivestraight(byte straight) {
+  //simple command for telling the bot to drive straight.
+  //input is a byte, so it ranges from 0-255
+  drive(straight,straight)
 }
+
 void setup() {
   // put your setup code here, to run once:
-  pinMode(MOTOR1, OUTPUT);
-  pinMode(MOTOR2, OUTPUT);
-  digitalWrite(MOTOR1, LOW);
-  digitalWrite(MOTOR2, LOW);
+
 }
+
 void loop() {
   // put your main code here, to run repeatedly:
-  digitalWrite(MOTOR1, HIGH); // left wheel
-  analogWrite(MOTOR1, 126);
-  delay(1000);
-  digitalWrite(MOTOR2, HIGH); // right wheel
-  analogWrite(MOTOR2, 126);
-  delay(1000);
-  forward(126); 
-  delay(1000);
-  backward(126); 
-  delay(1000);
-  turn_left(126);
-  delay(1000);
-  turn_right(126);
-  delay(1000);
-  forward(255); // max forward speed
-  delay(1000);
-  forward(1); // min forward speed
-  delay(1000);
+
 }
