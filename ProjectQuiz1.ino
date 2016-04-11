@@ -17,7 +17,7 @@ void drive(byte left, byte right, bool debug = false) {
 void drivestraight(byte straight) {
   //simple command for telling the bot to drive straight.
   //input is a byte, so it ranges from 0-255
-  drive(straight,straight)
+  drive(straight,straight);
 }
 
 void setup() {
