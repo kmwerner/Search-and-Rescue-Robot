@@ -1,5 +1,5 @@
-#define Ain1 3
-#define Ain2 2
+#define Ain1 2
+#define Ain2 3
 #define Bin1 4
 #define Bin2 5
 #define PWMA 9
@@ -10,16 +10,29 @@
 // in2 -> HIGH
 // PWM -> HIGH PWM 
 
-void motorA(byte rate){
-  //Drives motorA at PWM rate proportional to input byte. 0 = Full reverse, 255 = Full forward
-  int drive_rate = 2 * rate-128;
-  if(drive_rate>0){
+void motorA(int motorspeed){
+  //Drives motorA at PWM rate proportional to input byte. -100 = full reverse, 100 = full forward
+  
+  if(motorspeed>100){
+    // input protection; clamps input to 100
+    motorspeed = 100;
+  }
+  else if(motorspeed<-100){
+    // input protection; clamps input to -100
+    motorspeed = -100;
+  }
+  
+  if(motorspeed>0){
+    // drive motor according to spec sheet (CW)
+    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
     digitalWrite(Ain1,HIGH);
     digitalWrite(Ain2,LOW);
     analogWrite(PWMA,drive_rate);
   }
-  else if(drive_rate<0){
-    drive_rate= ~drive_rate;
+  else if(motorspeed<0){
+    // drive motor according to spec sheet (CCW)
+    motorspeed = -motorspeed;
+    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
     digitalWrite(Ain1,LOW);
     digitalWrite(Ain2,HIGH);
     analogWrite(PWMA,drive_rate);
@@ -30,16 +43,26 @@ void motorA(byte rate){
     analogWrite(PWMA,255);
   }
 }
-void motorB(byte rate){
-  //Drives motorB at PWM rate proportional to input byte. 0 = Full reverse, 255 = Full forward
-  int drive_rate = 2 * rate-128;
+void motorB(int motorspeed){
+  //Drives motorA at PWM rate proportional to input byte. -100 = full reverse, 100 = full forward
+  
+  if(motorspeed>100){
+    // input protection; clamps input to 100
+    motorspeed = 100;
+  }
+  else if(motorspeed<-100){
+    // input protection; clamps input to -100
+    motorspeed = -100;
+  }
   if(drive_rate>0){
+    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
     digitalWrite(Bin1,HIGH);
     digitalWrite(Bin2,LOW);
     analogWrite(PWMB,drive_rate);
   }
   else if(drive_rate<0){
-    drive_rate= ~drive_rate;
+    motorspeed = -motorspeed;
+    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
     digitalWrite(Bin1,LOW);
     digitalWrite(Bin2,HIGH);
     analogWrite(PWMB,drive_rate);
@@ -51,7 +74,7 @@ void motorB(byte rate){
   }
 }
 
-void drive(byte left, byte right, bool debug = false) {
+void drive(int left, int right, bool debug = false) {
   //generic 'drive' command that drives each motor to the
   //value specified. Input is a byte (0-255)
   motorA(left); //drives MotorA to value 'left'
@@ -64,7 +87,7 @@ void drive(byte left, byte right, bool debug = false) {
   }
 }
 
-void drivestraight(byte straight) {
+void drivestraight(int straight) {
   //simple command for telling the bot to drive straight.
   //input is a byte, so it ranges from 0-255
   drive(straight,straight);
@@ -98,5 +121,4 @@ void loop() {
   delay(1000);
   drive(255,255);
   delay(1000);
-
 }
