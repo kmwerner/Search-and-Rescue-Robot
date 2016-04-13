@@ -1,1 +1,3 @@
-
+LED Matrix - Showes whats going on: 'R' if RED block found, 'Forward Arrow' if moving forward.
+Buzzer - Making music
+LEDs - UNDERGLOW!!!!!!!!!!!
