@@ -54,13 +54,13 @@ void motorB(int motorspeed){
     // input protection; clamps input to -100
     motorspeed = -100;
   }
-  if(drive_rate>0){
+  if(motorspeed>0){
     byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
     digitalWrite(Bin1,HIGH);
     digitalWrite(Bin2,LOW);
     analogWrite(PWMB,drive_rate);
   }
-  else if(drive_rate<0){
+  else if(motorspeed<0){
     motorspeed = -motorspeed;
     byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
     digitalWrite(Bin1,LOW);
