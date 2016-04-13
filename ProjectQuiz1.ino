@@ -105,20 +105,20 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  drive(192,0);
+  drive(50,0);
   delay(1000);
-  drive(0,192);
+  drive(0,50);
   delay(1000);
-  drive(64,64);
+  drive(-50,-50);
   delay(1000);
-  drive(192,192);
+  drive(50,50);
   delay(1000);
-  drive(192,64);
+  drive(50,-50);
   delay(1000);
-  drive(64,192);
+  drive(-50,50);
   delay(1000);
-  drive(129,129);
+  drive(1,1);
   delay(1000);
-  drive(255,255);
+  drive(100,100);
   delay(1000);
 }
