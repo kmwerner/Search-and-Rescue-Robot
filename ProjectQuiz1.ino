@@ -5,6 +5,8 @@
 #define PWMA 9
 #define PWMB 10
 
+char outPins[] = {Ain1, Ain2, Bin1, Bin2, PWMA, PWMB};
+
 // To drive a motor CCW:
 // in1 -> LOW
 // in2 -> HIGH
@@ -95,12 +97,9 @@ void drivestraight(int straight) {
 
 void setup() {
   // put your setup code here, to run once:
-  pinMode(Ain1,OUTPUT);
-  pinMode(Ain2,OUTPUT);
-  pinMode(Bin1,OUTPUT);
-  pinMode(Bin2,OUTPUT);
-  pinMode(PWMA,OUTPUT);
-  pinMode(PWMB,OUTPUT);
+  for(int i = 0;i < sizeof(outPins);i++){
+    pinMode(outPins[i],OUTPUT);
+  } 
 }
 
 void loop() {
