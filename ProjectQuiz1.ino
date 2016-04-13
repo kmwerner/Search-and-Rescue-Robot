@@ -1,5 +1,5 @@
-#define Ain1 2
-#define Ain2 3
+#define Ain1 3
+#define Ain2 2
 #define Bin1 4
 #define Bin2 5
 #define PWMA 9
@@ -82,6 +82,21 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  drive(192,0);
+  delay(1000);
+  drive(0,192);
+  delay(1000);
+  drive(64,64);
+  delay(1000);
+  drive(192,192);
+  delay(1000);
+  drive(192,64);
+  delay(1000);
+  drive(64,192);
+  delay(1000);
+  drive(129,129);
+  delay(1000);
   drive(255,255);
+  delay(1000);
 
 }
