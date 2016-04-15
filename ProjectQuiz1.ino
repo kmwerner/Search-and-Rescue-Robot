@@ -7,13 +7,8 @@
 
 char outPins[] = {Ain1, Ain2, Bin1, Bin2, PWMA, PWMB};
 
-// To drive a motor CCW:
-// in1 -> LOW
-// in2 -> HIGH
-// PWM -> HIGH PWM 
-
 void motorA(int motorspeed){
-  //Drives motorA at PWM rate proportional to input byte. -100 = full reverse, 100 = full forward
+  //Low level motor control. Drives motorA at PWM rate proportional to input byte. -100 = full reverse, 100 = full forward
   
   if(motorspeed>100){
     // input protection; clamps input to 100
@@ -40,6 +35,7 @@ void motorA(int motorspeed){
     analogWrite(PWMA,drive_rate);
   }
   else{
+    //MOTOR STOP command according to datasheet
     digitalWrite(Ain1,LOW);
     digitalWrite(Ain2,LOW);
     analogWrite(PWMA,255);
@@ -70,15 +66,21 @@ void motorB(int motorspeed){
     analogWrite(PWMB,drive_rate);
   }
   else{
+    //MOTOR STOP command according to datasheet
     digitalWrite(Bin1,LOW);
     digitalWrite(Bin2,LOW);
     analogWrite(PWMB,255);
   }
 }
 
-void drive(int left, int right, bool debug = false) {
+void drive(int left, int right, int bias = 0 ,bool debug = false) {
   //generic 'drive' command that drives each motor to the
-  //value specified. Input is a byte (0-255)
+  //value specified. Input for each motor is -100 to 100, with 
+  //-100 as full reverse and 100 as full power forward.
+  //bias variable is used to calibrate driving straight. It will
+  //add this value to the right motor and remove it from the left motor.
+  //
+  //Ensure motors are calibrated properly. May include a function for this.
   motorA(left); //drives MotorA to value 'left'
   motorB(right); //drives MOTORB to value 'right'
   if(debug){ //prints debug information if flagged to do so
@@ -90,9 +92,19 @@ void drive(int left, int right, bool debug = false) {
 }
 
 void drivestraight(int straight) {
-  //simple command for telling the bot to drive straight.
+  //High level driving command for telling the bot to drive straight.
   //input is a byte, so it ranges from 0-255
   drive(straight,straight);
+}
+
+void tankright(int tankrightspeed = 20){
+  //Skid-steers the bot to the right.
+  drive(-tankrightspeed, tankrightspeed);
+}
+
+void tankleft(int tankleftspeed = 20){
+  //skid-steers the bot to the left.
+  drive(tankleftspeed,-tankleftspeed);
 }
 
 void setup() {
