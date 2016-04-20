@@ -13,11 +13,11 @@ void ArenaIR(byte IRleft, byte IRright){
     //go straight 
   } if else ((IRleft == Light)&(IRright == Dark)){
     //stop
-    //turn Y degrees
+    //turn Z degrees
     //go straight
   } if else ((IRleft == Dark)&(IRright == Light)){
     //stop
-    //turn Y degrees
+    //turn -Z degrees
     //go straight
   } else {
     // contuine
