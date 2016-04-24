@@ -11,7 +11,7 @@ char outPins[] = {Ain1, Ain2, Bin1, Bin2, PWMA, PWMB};
 char inPins[] = {IR};
 
 int IRvalue;
-int IRflag_value = 90;
+int IRflag_value = 10;
 bool flag = false;
 
 bool IRflag(){
@@ -136,7 +136,9 @@ void loop() {
   // put your main code here, to run repeatedly:
   if (IRflag() == true){
     drive(-50,-50);
-    delay(250);
-    tankright(30);
+    delay(2000);
+    drive(-50,50);
+    //tankright(50);
+    delay(1000);
   } else {drivestraight(60);}
 }
