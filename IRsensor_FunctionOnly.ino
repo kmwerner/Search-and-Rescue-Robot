@@ -1,18 +1,19 @@
-#define IR_left #_#
-#define IR_right #_#
+#define IR A0
 
-void ArenaIR(bool IRSensor){
-bool IRSensor = FALSE; // stores whether the robot is on a black line. True = Black Line
+int IRvalue;
+int IRflag_value = 90;
+bool flag = FALSE;
 
-if(IRSensor){ //We are about to run over a line!
-// things to do if we run over a black line; //this loop should be very fast (<1ms)
-delay(5)
+bool IRflag(){
+  IRvalue = analogRead(IR);
+  if (IRvalue < IRflag_value){ //We are about to run over a line!
+    flag = TRUE;
+  }else{ //We're all good.
+    flag = FALSE;
+  }
+  return flag;
 }
-else{ //We're all good.
-//things to do if we are in the regular arena; //this loop should be very fast (<1ms)
-delay(5)
-}
-}
+
 /*void line_follow(){
   distance2 = ultrasonicPulse(triggerPin2, echoingPin2);
   while(distance2 > 40 || countdown > 1){
