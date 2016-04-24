@@ -1,15 +1,15 @@
 #define IR A0
 
 int IRvalue;
-int IRflag_value = 90;
-bool flag = FALSE;
+int IRflag_value = 10;
+bool flag = false;
 
 bool IRflag(){
   IRvalue = analogRead(IR);
   if (IRvalue < IRflag_value){ //We are about to run over a line!
-    flag = TRUE;
+    flag = true;
   }else{ //We're all good.
-    flag = FALSE;
+    flag = false;
   }
   return flag;
 }
