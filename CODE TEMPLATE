@@ -1,0 +1,138 @@
+//  ___  ___  _   __   _   ___  _              _ 
+// | __|| __|/ | /  \ / | | __|(_) _ _   __ _ | |
+// | _| | _| | || () || | | _| | || ' \ / _` || |
+// |___||___||_| \__/ |_| |_|  |_||_||_|\__,_||_|
+                                               
+//Define Digital Pins - These match up with the motor shield pinout.
+#define Ech2 0
+#define Trg2 1
+#define Ain2 2
+#define Ain1 3
+#define Bin1 4
+#define Bin2 5
+#define Trg4 6
+#define Ech4 7
+#define Grn 8
+#define PWMA 9
+#define PWMB 10
+#define Red 11
+#define Ech1 12
+#define Trg1 13
+//Define Analog Pins - These match up with the motor shield pinout.
+#define Trg3 A0
+#define Ech3 A1
+#define Meas A2
+#define Blue A3
+#define Opt2 A4
+#define Opt1 A5
+
+char outPins[] = {Trg2, Ain2, Ain1, Bin1, Bin2, Trg4, Grn, PWMA, PWMB, Red, Trg1, Trg3, Blue,};
+char inPins[] = {Ech2, Ech4, Ech1, Ech3, Meas, Opt2, Opt1};
+
+void drive(int leftval, int rightval){
+  //drive commands to run the motors. See motor controller datasheet.
+  if(leftval==0){
+    //Stop left motor
+    digitalWrite(Ain1,LOW); digitalWrite(Ain2,LOW); analogWrite(PWMA,255);
+  }
+  else if(rightval==0){
+    //Stop right motor
+    digitalWrite(Bin1,LOW); digitalWrite(Bin2,LOW); analogWrite(PWMB,255);
+  }
+  else if(leftval>0){
+    //Drive left motor forwards
+    digitalWrite(Ain1,HIGH); digitalWrite(Ain2,LOW);
+    if(leftval>255){leftval=255;}
+    analogWrite(PWMA,leftval);
+  }
+  else if(rightval>0){
+    //Drive right motor forwards
+    digitalWrite(Bin1,HIGH); digitalWrite(Bin2,LOW);
+    if(rightval>255){rightval=255;}
+    analogWrite(PWMB,rightval);
+  }
+  else if(leftval<0){
+    //drive left motor in reverse
+    leftval=-leftval; //invert input
+    digitalWrite(Ain1,LOW);
+    digitalWrite(Ain2,HIGH);
+    if(leftval>255){leftval=255;}
+    analogWrite(PWMA,leftval);
+  }
+  else if(rightval<0){
+    //drive right motor in reverse
+    rightval=-rightval; //invert input
+    digitalWrite(Bin1,LOW);
+    digitalWrite(Bin2,HIGH);
+    if(rightval>255){rightval=255;}
+    analogWrite(PWMB,rightval);
+  }
+}
+
+bool checkIR1(){ //Returns TRUE if opt1 is on a black line
+  int IRvalue = analogRead(Opt1);
+  if(IRvalue<10){return false;}
+  else{return true;}
+}
+
+bool checkIR2(){ //Returns TRUE if opt2 is on a black line
+  int IRvalue = analogRead(Opt2);
+  if(IRvalue<10){return false;}
+  else{return true;}
+}
+
+byte checkUS1(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg1,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg1,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg1,LOW);
+  long duration = pulseIn(Ech1,HIGH);
+  long distance = duration/58.2;
+  return(distance);
+}
+
+byte checkUS2(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg2,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg2,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg2,LOW);
+  long duration = pulseIn(Ech2,HIGH);
+  long distance = duration/58.2;
+  return(distance);
+}
+
+byte checkUS3(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg3,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg3,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg3,LOW);
+  long duration = pulseIn(Ech3,HIGH);
+  long distance = duration/58.2;
+  return(distance);
+}
+
+byte checkUS4(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg4,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg4,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg4,LOW);
+  long duration = pulseIn(Ech4,HIGH);
+  long distance = duration/58.2;
+  return(distance);
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  for(int i=0; i<sizeof(outPins);i++){pinMode(outPins[i],OUTPUT);} //initialize output pins
+  for(int i=0; i<sizeof(inPins);i++){pinMode(inPins[i],INPUT);}    //initialize input  pins
+  
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  
+}
