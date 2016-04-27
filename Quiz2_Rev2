@@ -1,0 +1,196 @@
+//Define Digital Pins - These match up with the motor shield pinout.
+#define Ech2 0
+#define Trg2 1
+#define Ain2 2
+#define Ain1 3
+#define Bin1 4
+#define Bin2 5
+#define Trg4 6
+#define Ech4 7
+#define Grn 8
+#define PWMA 9
+#define PWMB 10
+#define Red 11
+#define Ech1 12
+#define Trg1 13
+//Define Analog Pins - These match up with the motor shield pinout.
+#define Trg3 A0
+#define Ech3 A1
+#define Meas A2
+#define Blue A3
+#define Opt2 A4
+#define Opt1 A5
+
+char outPins[] = {Trg2, Ain2, Ain1, Bin1, Bin2, Trg4, Grn, PWMA, PWMB, Red, Trg1, Trg3, Blue,};
+char inPins[] = {Ech2, Ech4, Ech1, Ech3, Meas, Opt2, Opt1};
+
+// DRIVE FUNCTION GOES HERE
+void motorA(int motorspeed){
+  //Drives motorA at PWM rate proportional to input byte. -100 = full reverse, 100 = full forward
+  
+  if(motorspeed>100){
+    // input protection; clamps input to 100
+    motorspeed = 100;
+  }
+  else if(motorspeed<-100){
+    // input protection; clamps input to -100
+    motorspeed = -100;
+  }
+  
+  if(motorspeed>0){
+    // drive motor according to spec sheet (CW)
+    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
+    digitalWrite(Ain1,HIGH);
+    digitalWrite(Ain2,LOW);
+    analogWrite(PWMA,drive_rate);
+  }
+  else if(motorspeed<0){
+    // drive motor according to spec sheet (CCW)
+    motorspeed = -motorspeed;
+    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
+    digitalWrite(Ain1,LOW);
+    digitalWrite(Ain2,HIGH);
+    analogWrite(PWMA,drive_rate);
+  }
+  else{
+    digitalWrite(Ain1,LOW);
+    digitalWrite(Ain2,LOW);
+    analogWrite(PWMA,255);
+  }
+}
+void motorB(int motorspeed){
+  //Drives motorA at PWM rate proportional to input byte. -100 = full reverse, 100 = full forward
+  
+  if(motorspeed>100){
+    // input protection; clamps input to 100
+    motorspeed = 100;
+  }
+  else if(motorspeed<-100){
+    // input protection; clamps input to -100
+    motorspeed = -100;
+  }
+  if(motorspeed>0){
+    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
+    digitalWrite(Bin1,HIGH);
+    digitalWrite(Bin2,LOW);
+    analogWrite(PWMB,drive_rate);
+  }
+  else if(motorspeed<0){
+    motorspeed = -motorspeed;
+    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
+    digitalWrite(Bin1,LOW);
+    digitalWrite(Bin2,HIGH);
+    analogWrite(PWMB,drive_rate);
+  }
+  else{
+    digitalWrite(Bin1,LOW);
+    digitalWrite(Bin2,LOW);
+    analogWrite(PWMB,255);
+  }
+}
+
+void drive(int left, int right, bool debug = false) {
+  //generic 'drive' command that drives each motor to the
+  //value specified. Input is a byte (0-255)
+  motorA(left); //drives MotorA to value 'left'
+  motorB(right); //drives MOTORB to value 'right'
+  if(debug){ //prints debug information if flagged to do so
+    Serial.print("Driving Motor1:");
+    Serial.print(left);
+    Serial.print("Driving  Motor2:");
+    Serial.println(right);
+  }
+}
+
+
+
+// END DRIVE FUNCTION
+bool checkIR1(){ //Returns TRUE if opt1 is on a black line
+  int IRvalue = analogRead(Opt1);
+  if(IRvalue<10){return false;}
+  else{return true;}
+}
+
+bool checkIR2(){ //Returns TRUE if opt2 is on a black line
+  int IRvalue = analogRead(Opt2);
+  if(IRvalue<10){return false;}
+  else{return true;}
+}
+
+byte checkUS1(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg1,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg1,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg1,LOW);
+  long duration = pulseIn(Ech1,HIGH);
+  long distance = duration/58.2;
+  return(distance);
+}
+
+byte checkUS2(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg2,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg2,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg2,LOW);
+  long duration = pulseIn(Ech2,HIGH);
+  long distance = duration/58.2;
+  return(distance);
+}
+
+byte checkUS3(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg3,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg3,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg3,LOW);
+  long duration = pulseIn(Ech3,HIGH);
+  long distance = duration/58.2;
+  return(distance);
+}
+
+byte checkUS4(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg4,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg4,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg4,LOW);
+  long duration = pulseIn(Ech4,HIGH);
+  long distance = duration/58.2;
+  return(distance);
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  for(int i=0; i<sizeof(outPins);i++){pinMode(outPins[i],OUTPUT);} //initialize output pins
+  for(int i=0; i<sizeof(inPins);i++){pinMode(inPins[i],INPUT);}    //initialize input  pins
+  Serial.begin(9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  long secondultra = checkUS2();
+  Serial.print("Second Ultra: ");
+  Serial.println(secondultra);
+  delay(1000);
+  
+  if (secondultra > 20) {
+    drive(35,35);
+  }
+  else{
+    delay(1000);
+    drive(0,35); //turn to the left
+    delay(1000);  //wait
+    drive(0,0); //hold
+    delay(1000);  //wait
+    drive(35,35); //drive around object
+    delay(1000);
+    drive(0,0); //hold
+    delay(1000);  //wait
+    drive(35,0); // turn right
+    delay(1000); //wait --- check all these values)    
+    drive(0,0); //hold
+    delay(1000);  //wait
+  }
+}
