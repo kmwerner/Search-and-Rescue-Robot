@@ -1,3 +1,8 @@
+//  ___  ___  _   __   _   ___  _              _ 
+// | __|| __|/ | /  \ / | | __|(_) _ _   __ _ | |
+// | _| | _| | || () || | | _| | || ' \ / _` || |   CRAPPY VERSION
+// |___||___||_| \__/ |_| |_|  |_||_||_|\__,_||_|
+                                               
 //Define Digital Pins - These match up with the motor shield pinout.
 #define Ech2 0
 #define Trg2 1
@@ -21,10 +26,13 @@
 #define Opt2 A4
 #define Opt1 A5
 
+
+
+
 char outPins[] = {Trg2, Ain2, Ain1, Bin1, Bin2, Trg4, Grn, PWMA, PWMB, Red, Trg1, Trg3, Blue,};
 char inPins[] = {Ech2, Ech4, Ech1, Ech3, Meas, Opt2, Opt1};
 
-// DRIVE FUNCTION GOES HERE
+
 void motorA(int motorspeed){
   //Drives motorA at PWM rate proportional to input byte. -100 = full reverse, 100 = full forward
   
@@ -102,21 +110,6 @@ void drive(int left, int right, bool debug = false) {
   }
 }
 
-
-
-// END DRIVE FUNCTION
-bool checkIR1(){ //Returns TRUE if opt1 is on a black line
-  int IRvalue = analogRead(Opt1);
-  if(IRvalue<10){return false;}
-  else{return true;}
-}
-
-bool checkIR2(){ //Returns TRUE if opt2 is on a black line
-  int IRvalue = analogRead(Opt2);
-  if(IRvalue<10){return false;}
-  else{return true;}
-}
-
 byte checkUS1(){ //Returns 0-255 cm distance measured on US1
   digitalWrite(Trg1,LOW);
   delayMicroseconds(2);
@@ -173,24 +166,35 @@ void loop() {
   long secondultra = checkUS2();
   Serial.print("Second Ultra: ");
   Serial.println(secondultra);
-  delay(1000);
-  
-  if (secondultra > 20) {
-    drive(35,35);
+  delay(500);
+  if(secondultra==0){secondultra=200;}    
+  if(secondultra>40){
+    drive(40,38);//drive forward (drive(50,50) or something like that)
+    delay(100);
+    Serial.println("WE AIN'T FOUND SHIT");
   }
   else{
+    drive(0,0);
     delay(1000);
-    drive(0,35); //turn to the left
-    delay(1000);  //wait
-    drive(0,0); //hold
-    delay(1000);  //wait
-    drive(35,35); //drive around object
+    Serial.println("TARGET ACQUIRED");
+    drive(0,38); //turn to the left
+    Serial.println("JIGGY TO THE LEFT");
+    delay(700);  //wait
+    drive(0,0);
+    delay(1000); //POST JIGGY WAIT
+    
+    drive(40,35); //drive around object
+    Serial.println("CHACHA Real smooth");
     delay(1000);
-    drive(0,0); //hold
-    delay(1000);  //wait
-    drive(35,0); // turn right
-    delay(1000); //wait --- check all these values)    
-    drive(0,0); //hold
-    delay(1000);  //wait
+    drive(0,0); 
+    delay(1000); //POST CHACHA WAIT
+    
+    drive(40,0); // turn right
+    Serial.println("JIGGY TO THE RIGHT");
+    delay(700); //wait --- check all these values)
+    drive(0,0);
+    delay(1000); //POST JIGGY WAIT
+    
+    secondultra=200;
   }
 }
