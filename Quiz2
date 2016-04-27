@@ -1,146 +1,152 @@
-#define Ain1 2
-#define Ain2 3
+//  ___  ___  _   __   _   ___  _              _ 
+// | __|| __|/ | /  \ / | | __|(_) _ _   __ _ | |
+// | _| | _| | || () || | | _| | || ' \ / _` || |
+// |___||___||_| \__/ |_| |_|  |_||_||_|\__,_||_|
+                                               
+//Define Digital Pins - These match up with the motor shield pinout.
+#define Ech2 0
+#define Trg2 1
+#define Ain2 2
+#define Ain1 3
 #define Bin1 4
 #define Bin2 5
+#define Trg4 6
+#define Ech4 7
+#define Grn 8
 #define PWMA 9
 #define PWMB 10
-#define TRIGpin    //<- insert your signal information here   
-#define ECHOpin    //<- insert your signal information here
+#define Red 11
+#define Ech1 12
+#define Trg1 13
+//Define Analog Pins - These match up with the motor shield pinout.
+#define Trg3 A0
+#define Ech3 A1
+#define Meas A2
+#define Blue A3
+#define Opt2 A4
+#define Opt1 A5
 
-int maximumRange = 200; // Maximum range needed
-int minimumRange = 0; // Minimum range needed
-long duration, distance; // Duration used to calculate distance
+char outPins[] = {Trg2, Ain2, Ain1, Bin1, Bin2, Trg4, Grn, PWMA, PWMB, Red, Trg1, Trg3, Blue,};
+char inPins[] = {Ech2, Ech4, Ech1, Ech3, Meas, Opt2, Opt1};
 
-char outPins[] = {Ain1, Ain2, Bin1, Bin2, PWMA, PWMB};
-
-void motorA(int motorspeed){
-  //Low level motor control. Drives motorA at PWM rate proportional to input byte. -100 = full reverse, 100 = full forward
-  
-  if(motorspeed>100){
-    // input protection; clamps input to 100
-    motorspeed = 100;
+void drive(int leftval, int rightval){
+  //drive commands to run the motors. See motor controller datasheet.
+  if(leftval==0){
+    //Stop left motor
+    digitalWrite(Ain1,LOW); digitalWrite(Ain2,LOW); analogWrite(PWMA,255);
   }
-  else if(motorspeed<-100){
-    // input protection; clamps input to -100
-    motorspeed = -100;
+  else if(rightval==0){
+    //Stop right motor
+    digitalWrite(Bin1,LOW); digitalWrite(Bin2,LOW); analogWrite(PWMB,255);
   }
-  
-  if(motorspeed>0){
-    // drive motor according to spec sheet (CW)
-    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
-    digitalWrite(Ain1,HIGH);
-    digitalWrite(Ain2,LOW);
-    analogWrite(PWMA,drive_rate);
+  else if(leftval>0){
+    //Drive left motor forwards
+    digitalWrite(Ain1,HIGH); digitalWrite(Ain2,LOW);
+    if(leftval>255){leftval=255;}
+    analogWrite(PWMA,leftval);
   }
-  else if(motorspeed<0){
-    // drive motor according to spec sheet (CCW)
-    motorspeed = -motorspeed;
-    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
+  else if(rightval>0){
+    //Drive right motor forwards
+    digitalWrite(Bin1,HIGH); digitalWrite(Bin2,LOW);
+    if(rightval>255){rightval=255;}
+    analogWrite(PWMB,rightval);
+  }
+  else if(leftval<0){
+    //drive left motor in reverse
+    leftval=-leftval; //invert input
     digitalWrite(Ain1,LOW);
     digitalWrite(Ain2,HIGH);
-    analogWrite(PWMA,drive_rate);
+    if(leftval>255){leftval=255;}
+    analogWrite(PWMA,leftval);
   }
-  else{
-    //MOTOR STOP command according to datasheet
-    digitalWrite(Ain1,LOW);
-    digitalWrite(Ain2,LOW);
-    analogWrite(PWMA,255);
-  }
-}
-void motorB(int motorspeed){
-  //Drives motorA at PWM rate proportional to input byte. -100 = full reverse, 100 = full forward
-  
-  if(motorspeed>100){
-    // input protection; clamps input to 100
-    motorspeed = 100;
-  }
-  else if(motorspeed<-100){
-    // input protection; clamps input to -100
-    motorspeed = -100;
-  }
-  if(motorspeed>0){
-    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
-    digitalWrite(Bin1,HIGH);
-    digitalWrite(Bin2,LOW);
-    analogWrite(PWMB,drive_rate);
-  }
-  else if(motorspeed<0){
-    motorspeed = -motorspeed;
-    byte drive_rate = map(motorspeed,1,100,1,255); // scales motorspeed into PWM drive_rate
+  else if(rightval<0){
+    //drive right motor in reverse
+    rightval=-rightval; //invert input
     digitalWrite(Bin1,LOW);
     digitalWrite(Bin2,HIGH);
-    analogWrite(PWMB,drive_rate);
-  }
-  else{
-    //MOTOR STOP command according to datasheet
-    digitalWrite(Bin1,LOW);
-    digitalWrite(Bin2,LOW);
-    analogWrite(PWMB,255);
+    if(rightval>255){rightval=255;}
+    analogWrite(PWMB,rightval);
   }
 }
 
-void drive(int left, int right, int bias = 0 ,bool debug = false) {
-  //generic 'drive' command that drives each motor to the
-  //value specified. Input for each motor is -100 to 100, with 
-  //-100 as full reverse and 100 as full power forward.
-  //bias variable is used to calibrate driving straight. It will
-  //add this value to the right motor and remove it from the left motor.
-  //
-  //Ensure motors are calibrated properly. May include a function for this.
-  motorA(left); //drives MotorA to value 'left'
-  motorB(right); //drives MOTORB to value 'right'
-  if(debug){ //prints debug information if flagged to do so
-    Serial.print("Driving Motor1:");
-    Serial.print(left);
-    Serial.print("  Motor2:");
-    Serial.println(right);
-  }
+bool checkIR1(){ //Returns TRUE if opt1 is on a black line
+  int IRvalue = analogRead(Opt1);
+  if(IRvalue<10){return false;}
+  else{return true;}
 }
 
-void drivestraight(int straight) {
-  //High level driving command for telling the bot to drive straight.
-  //input is a byte, so it ranges from 0-255
-  drive(straight,straight);
+bool checkIR2(){ //Returns TRUE if opt2 is on a black line
+  int IRvalue = analogRead(Opt2);
+  if(IRvalue<10){return false;}
+  else{return true;}
 }
 
-void tankright(int tankrightspeed = 20){
-  //Skid-steers the bot to the right.
-  drive(-tankrightspeed, tankrightspeed);
+byte checkUS1(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg1,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg1,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg1,LOW);
+  long duration = pulseIn(Ech1,HIGH);
+  long distance = duration/58.2;
+  return(distance);
 }
 
-void tankleft(int tankleftspeed = 20){
-  //skid-steers the bot to the left.
-  drive(tankleftspeed,-tankleftspeed);
+byte checkUS2(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg2,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg2,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg2,LOW);
+  long duration = pulseIn(Ech2,HIGH);
+  long distance = duration/58.2;
+  return(distance);
+}
+
+byte checkUS3(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg3,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg3,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg3,LOW);
+  long duration = pulseIn(Ech3,HIGH);
+  long distance = duration/58.2;
+  return(distance);
+}
+
+byte checkUS4(){ //Returns 0-255 cm distance measured on US1
+  digitalWrite(Trg4,LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trg4,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trg4,LOW);
+  long duration = pulseIn(Ech4,HIGH);
+  long distance = duration/58.2;
+  return(distance);
 }
 
 void setup() {
   // put your setup code here, to run once:
-  for(int i = 0;i < sizeof(outPins);i++){
-    pinMode(outPins[i],OUTPUT);
-  }
-  pinMode(TRIGpin, OUTPUT);       
-  pinMode(ECHOpin, INPUT); 
+  for(int i=0; i<sizeof(outPins);i++){pinMode(outPins[i],OUTPUT);} //initialize output pins
+  for(int i=0; i<sizeof(inPins);i++){pinMode(inPins[i],INPUT);}    //initialize input  pins
+  Serial.begin(9600);
 }
+
 void loop() {
   // put your main code here, to run repeatedly:
-digitalWrite(TRIGpin, LOW); 
- delayMicroseconds(2); 
-
- digitalWrite(TRIGpin, HIGH);
- delayMicroseconds(10); 
- 
- digitalWrite(TRIGpin, LOW);
- duration = pulseIn(ECHOpin, HIGH);
- 
- //Calculate the distance (in cm) based on the speed of sound.
- distance = duration/58.2;
- 
- if (distance >= maximumRange || distance <= minimumRange){
- drive()
- }
- else {
- /* Send the distance to the computer using Serial protocol, and
- turn LED OFF to indicate successful reading. */
-drive()
- }
+  long secondultra = checkUS2();
+  Serial.print("Second Ultra: ");
+  Serial.println(secondultra);
+  delay(100);
+  if ultrasonic is > 20 {
+    drive forward (drive(50,50) or something like that)
+  }
+  else{
+    drive(0,50); //turn to the left
+    delay(500);  //wait
+    drive(50,50); //drive around object
+    delay(500);
+    drive(50,0); // turn right
+    delay(500); //wait --- check all these values)    
+  }
 }
