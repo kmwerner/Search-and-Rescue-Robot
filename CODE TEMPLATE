@@ -134,5 +134,57 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
+  if (checkIR1() == true); {
+  drive(20,55);
+  delay(200);
+  }
+  else {
+  drive();
+  }
+  /* long secondultra = checkUS2();
+  Serial.print("Second Ultra: ");
+  Serial.println(secondultra);
+  delay(500);
+  if(secondultra==0){secondultra=200;}    
+  if(secondultra>40){
+    drive(40,38);//drive forward (drive(50,50) or something like that)
+    delay(100);
+    Serial.println("WE AIN'T FOUND SHIT");
+  }
+  else{
+    drive(0,0);
+    delay(1000);
+    Serial.println("TARGET ACQUIRED");
+    drive(0,38); //turn to the left
+    Serial.println("JIGGY TO THE LEFT");
+    delay(700);  //wait
+    drive(0,0);
+    delay(1000); //POST JIGGY WAIT
+    
+    drive(40,35); //drive around object
+    Serial.println("CHACHA Real smooth");
+    delay(1000);
+    drive(0,0); 
+    delay(1000); //POST CHACHA WAIT
+    
+    drive(40,0); // turn right
+    Serial.println("JIGGY TO THE RIGHT");
+    delay(700); //wait --- check all these values)
+    drive(0,0);
+    delay(1000); //POST JIGGY WAIT
+    
+    secondultra=200;
+  } */ //can be modified and repeated
+  /* if (color = red || color = green && secondultra > 40)
+  avoid block
+  elseif(color = blue)
+  send block out of arena
+  if (IRflag() == true){ // when robot gets to black line
+    drive(-50,-50);
+    delay(2000);
+    drive(-50,50);
+    //tankright(50);
+    delay(1000);
+  } else {drivestraight(60);
+  }
 }
