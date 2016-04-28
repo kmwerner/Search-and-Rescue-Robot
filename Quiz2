@@ -34,24 +34,12 @@ void drive(int leftval, int rightval){
   if(leftval==0){
     //Stop left motor
     digitalWrite(Ain1,LOW); digitalWrite(Ain2,LOW); analogWrite(PWMA,255);
-  }
-  else if(rightval==0){
-    //Stop right motor
-    digitalWrite(Bin1,LOW); digitalWrite(Bin2,LOW); analogWrite(PWMB,255);
-  }
-  else if(leftval>0){
+  }else if(leftval>0){
     //Drive left motor forwards
     digitalWrite(Ain1,HIGH); digitalWrite(Ain2,LOW);
     if(leftval>255){leftval=255;}
     analogWrite(PWMA,leftval);
-  }
-  else if(rightval>0){
-    //Drive right motor forwards
-    digitalWrite(Bin1,HIGH); digitalWrite(Bin2,LOW);
-    if(rightval>255){rightval=255;}
-    analogWrite(PWMB,rightval);
-  }
-  else if(leftval<0){
+  }else if(leftval<0){
     //drive left motor in reverse
     leftval=-leftval; //invert input
     digitalWrite(Ain1,LOW);
@@ -59,7 +47,15 @@ void drive(int leftval, int rightval){
     if(leftval>255){leftval=255;}
     analogWrite(PWMA,leftval);
   }
-  else if(rightval<0){
+  if(rightval==0){
+    //Stop right motor
+    digitalWrite(Bin1,LOW); digitalWrite(Bin2,LOW); analogWrite(PWMB,255);
+  }else if(rightval>0){
+    //Drive right motor forwards
+    digitalWrite(Bin1,HIGH); digitalWrite(Bin2,LOW);
+    if(rightval>255){rightval=255;}
+    analogWrite(PWMB,rightval);
+  }else if(rightval<0){
     //drive right motor in reverse
     rightval=-rightval; //invert input
     digitalWrite(Bin1,LOW);
