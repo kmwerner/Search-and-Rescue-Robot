@@ -94,7 +94,7 @@ void setup() {
 }
 
 void loop() {
-  if (checkIR1() == true); {
+  if (checkIR(0) == true); {
   drive(20,55);
   delay(200);
   }
