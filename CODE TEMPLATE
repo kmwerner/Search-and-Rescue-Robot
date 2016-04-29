@@ -94,7 +94,6 @@ void setup() {
 }
 
 void loop() {
-  /*
   if (checkIR1() == true); {
   drive(20,55);
   delay(200);
@@ -135,8 +134,8 @@ void loop() {
     delay(1000); //POST JIGGY WAIT
     
     secondultra=200;
-  } */ //can be modified and repeated
-  /* if (color = red || color = green && secondultra > 40)
+  }  //can be modified and repeated
+   if (color = red || color = green && secondultra > 40)
   avoid block
   elseif(color = blue)
   send block out of arena
@@ -147,6 +146,6 @@ void loop() {
     //tankright(50);
     delay(1000);
   } else {drivestraight(60);
-  }
+  }*/
 }
-*/
+
