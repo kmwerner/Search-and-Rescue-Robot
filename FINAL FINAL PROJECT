@@ -33,6 +33,11 @@ char IRlist[] = {Opt1, Opt2};
 char UStrg[] = {Trg1, Trg2, Trg3, Trg4};
 char USech[] = {Ech1, Ech2, Ech3, Ech4};
 
+bool MazeNotFound = true;
+bool NotThroughMaze = true;
+bool BlueWhaleNotFound = true;
+bool NotRemoved = true;
+
 void drive(int leftval, int rightval) {
   char Pins[] = {Ain1, Bin1, Ain2, Bin2, PWMA, PWMB};
   int values[] = {leftval, rightval};
@@ -94,9 +99,7 @@ int ShortestUS() { //Returns the identity number of the US sensor with the short
   byte pos[] = {checkUS(0), checkUS(1), checkUS(2)};
 
   for (int i = 0; i < sizeof(pos); i++) {
-    if (pos[i] == 0) {
-      pos[i] = 500;
-    }
+    if (pos[i] == 0) {pos[i] = 500;}
   }
 
   if ((pos[0] < pos[1] && pos[0] < pos[2])) {
@@ -112,62 +115,54 @@ int ShortestUS() { //Returns the identity number of the US sensor with the short
 }
 
 void Find_Maze() {
-  if (checkIR(0) == true) {
-    drive(25, 50);
-    delay(200);
-    drive(50, 50);
-    if (checkUS(0) <= 25) {
-      drive(25, 50);
-      delay(200);
-    }
-    else {
-      drive(50, 50);
-    }
-    if (checkUS(1) <= 35) {
-      drive(50, 25);
-      delay(200);
-    }
-    else {
-      drive(50, 50);
-    }
-    else {
-      drive(50, 50);
-    }
-  }
-  else if (checkIR(1) == true) {
+  bool Flag[] = {false, false};
+  bool FoundWall = false;
+
+  if (FoundWall && checkUS(2) > 35){
+    drive(25,50);
+    delay(200); 
+    MazeNotFound = false;
+  }else if (checkUS(0) <= 25) {
     drive(50, 25);
     delay(200);
+  }else if (checkUS(2) <= 35) {
+    FoundWall = true;
     drive(50, 50);
-  }
-  if (checkUS(0) <= 25) {
-    drive(50, 25);
     delay(200);
-  }
-  else {
-    drive(50, 50);
-  }
-  if (checkUS(2) <= 35) {
+  }else if (checkIR(0) == true) {
+    Flag[0] = true;
+    if(Flag[1]){Flag[1] = false;}
     drive(25, 50);
     delay(200);
-  }
-  else {
-    drive(50, 50);
-  }
-  else {
-    drive(50, 50);
+  }else if (checkIR(1) == true) {
+    Flag[1] = true;
+    if(Flag[0]){Flag[0] = false;}
+    drive(50, 25);
+    delay(200);
+  }else if(Flag[0]){
+    drive(35, 45);
+    delay(200);
+  }else if(Flag[1]){
+    drive(45, 35);
+    delay(200);
+  } else{
+    drive(50,50);
+    delay(200);
   }
 }
 
 void Maze() {
-  if (checkUS(0) <= 25) {
+  bool FoundWall = false;
+  if((FoundWall && checkUS(2) > 35)){
     drive(50, 25);
     delay(200);
-  }
-  else if (checkUS(2) <= 35) {
-    drive(25, 50);
+  }else if (checkUS(0) <= 25) {
+    drive(50, 25);
     delay(200);
-  }
-  else {
+  }else if (checkUS(2) <= 35) {
+    drive(50, 50);
+    delay(200);
+  }else {
     drive(50, 50);
     delay(200);
   }
@@ -179,6 +174,7 @@ void Find_Blue() {
 
 void Rescue() {
   if (checkIR(0) == true || checkIR(1) == true) {
+    NotRemoved = false;
     drive(-50, -50);
     delay(200);
   }
@@ -208,9 +204,13 @@ void setup() {
 }
 void loop() {
   // put your main code here, to run repeatedly:
-  Find_Maze();
-  Maze();
-  Find_Blue();
-  Rescue();
-  Leave();
+  if(MazeNotFound){
+    Find_Maze();
+  }else if (NotThroughMaze){
+    Maze();
+  } else if (BlueWhaleNotFound){
+    Find_Blue();
+  } else if (NotRemoved){
+    Rescue();
+  } else {Leave();}
 }
