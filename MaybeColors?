@@ -1,0 +1,59 @@
+#define Ech2 0
+#define Trg2 1
+#define Ain2 2
+#define Ain1 3
+#define Bin1 4
+#define Bin2 5
+#define Trg4 6
+#define Ech4 7
+#define Grn 8
+#define PWMA 9
+#define PWMB 10
+#define Red 11
+#define Ech1 12
+#define Trg1 13
+//Define Analog Pins - These match up with the motor shield pinout.
+#define Trg3 A5
+#define Ech3 A4
+#define Meas A3
+#define Blue A2
+#define Opt2 A1
+#define Opt1 A0
+
+int LED[3] = {Red, Grn, Blue};
+int red[3];
+int green[3];
+int blue[3];
+int color[3];
+
+char outPins[] = {Trg2, Ain2, Ain1, Bin1, Bin2, Trg4, Grn, PWMA, PWMB, Red, Trg1, Trg3, Blue,};
+char inPins[] = {Ech2, Ech4, Ech1, Ech3, Meas, Opt2, Opt1};
+
+void colorcheck() {
+  float range = .15;
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(LED[i], LOW);
+    delay(100);
+    color[i] = analogRead(Meas);
+    //Serial.print(color[i]);
+    digitalWrite(LED[i], HIGH);
+  }
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  Serial.println("Begin Color Sensing");
+  for (int i = 0; i < sizeof(outPins); i++) {pinMode(outPins[i], OUTPUT);} //initialize output pins
+  for (int i = 0; i < sizeof(inPins); i++) {pinMode(inPins[i], INPUT);}
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  colorcheck();
+  for (int i = 0; i < 3; i++) {
+    Serial.println(color[i]);
+  }
+  Serial.println("////");
+  delay(1000);
+}
