@@ -1,0 +1,171 @@
+//  ___  ___  _   __   _   ___  _              _
+// | __|| __|/ | /  \ / | | __|(_) _ _   __ _ | |
+// | _| | _| | || () || | | _| | || ' \ / _` || |
+// |___||___||_| \__/ |_| |_|  |_||_||_|\__,_||_|
+
+//Define Digital Pins - These match up with the motor shield pinout.
+#define Ech2 0
+#define Trg2 1
+#define Ain2 2
+#define Ain1 3
+#define Bin1 4
+#define Bin2 5
+#define Trg4 6
+#define Ech4 7
+#define Grn 8
+#define PWMA 9
+#define PWMB 10
+#define Red 11
+#define Ech1 12
+#define Trg1 13
+//Define Analog Pins - These match up with the motor shield pinout.
+#define Trg3 A5
+#define Ech3 A4
+#define Meas A3
+#define Blue A2
+#define Opt2 A1
+#define Opt1 A0
+
+char outPins[] = {Trg2, Ain2, Ain1, Bin1, Bin2, Trg4, Grn, PWMA, PWMB, Red, Trg1, Trg3, Blue,};
+char inPins[] = {Ech2, Ech4, Ech1, Ech3, Meas, Opt2, Opt1};
+
+byte checkUS(int identity) { //Returns 0-255 cm distance measured on US
+  char UStrg[] = {Trg1, Trg4, Trg3};
+  char USech[] = {Ech1, Ech4, Ech3};
+  long timeout = 3000;
+  // Identity Numbers:
+  // 0 = LEFT
+  // 1 = CENTER
+  // 2 = RIGHT
+  digitalWrite(UStrg[identity], LOW);
+  delayMicroseconds(2);
+  digitalWrite(UStrg[identity], HIGH);
+  delayMicroseconds(10);
+  digitalWrite(UStrg[identity], LOW);
+  long duration = pulseIn(USech[identity], HIGH, timeout);
+  long distance = duration / 58.2;
+  if(distance == 0){
+    distance = 50;
+  }
+  return (distance);
+  delay(100);
+}
+
+void drive(int leftval, int rightval) {
+  char Pins[] = {Ain1, Bin1, Ain2, Bin2, PWMA, PWMB};
+  int values[] = {rightval, leftval};
+  //drive commands to run the motors. See motor controller datasheet.
+  for (int i = 0; i < 2; i++) {
+    values[i] = map(values[i], 0, 100, 0, 255);
+    if (values[i] == 0) {
+      //Stop left motor
+      digitalWrite(Pins[i], LOW); digitalWrite(Pins[i + 2], LOW); analogWrite(Pins[i + 4], 255);
+    } else if (values[i] > 0) {
+      //Drive left motor forwards
+      digitalWrite(Pins[i], HIGH); digitalWrite(Pins[i + 2], LOW);
+      if (values[i] > 255) {
+        values[i] = 255;
+      }
+      analogWrite(Pins[i + 4], values[i]);
+    } else if (values[i] < 0) {
+      //drive left motor in reverse
+      values[i] = -values[i]; //invert input
+      digitalWrite(Pins[i], LOW);
+      digitalWrite(Pins[i + 2], HIGH);
+      if (values[i] > 255) {
+        values[i] = 255;
+      }
+      analogWrite(Pins[i + 4], values[i]);
+    }
+  }
+}
+
+bool blackline = false;
+void checkIR() {
+  //Serial.println(analogRead(A1));
+  if (analogRead(A1) < 800) { //600 for first floor, 800 for melamine floor
+    blackline = true;
+  }
+  else {
+    blackline = false;
+  }
+}
+
+void followline() {
+  //Line Follow Function
+  checkIR();
+  if (blackline == false) {
+    drive(30, 35);
+  }
+  else {
+    drive(35,0);
+  }
+}
+
+void followWall(int identity){
+  int distance = checkUS(identity);
+  if (distance < 10){
+    drive(30,30);  
+  }
+  else{
+    if (identity == 0){
+      drive(0,35);
+    } else if (identity == 2){
+      drive(35,0);
+    }
+}
+}
+
+int state = 0;
+int frontdist = 50;
+int leftdist = 50;
+int rightdist =50;
+
+void setup() {
+  for (int i = 0; i < sizeof(outPins); i++) {
+    pinMode(outPins[i], OUTPUT); //initialize output pins
+  }
+  for (int i = 0; i < sizeof(inPins); i++) {
+    pinMode(inPins[i], INPUT); //initialize input  pins
+  }
+  Serial.begin(9600);
+}
+
+void loop() {
+  frontdist = checkUS(0);
+  leftdist = checkUS(1);
+  Serial.println(frontdist);
+  rightdist = checkUS(2);
+  if(state==0){
+    if(frontdist>15){
+      followline();
+    }
+    else if(frontdist<15){
+      state=1;
+    }
+  }
+  else if(state==1){
+    if(leftdist>15){
+    drive(20,0);
+    }
+    else if(leftdist<25){
+      drive(20,20);
+      state=2;
+    }
+  }
+  else if(state == 2){
+    if(leftdist<49){
+      drive(20,20);
+    }
+    else if(leftdist>49){
+      drive(0,20);
+      delay(2000);
+      drive(34,30);
+      delay(7000);
+      state = 3;
+    }
+  }
+  else if(state==3){
+    followline();
+  }
+}
