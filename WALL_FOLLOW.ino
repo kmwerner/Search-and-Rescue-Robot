@@ -7,4 +7,5 @@ void followWall(int identity){
     } else if (identity == 2){
       drive(35,0);
     }
+  }
 }
