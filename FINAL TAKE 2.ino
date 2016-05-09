@@ -38,8 +38,6 @@ bool NotThroughMaze = true;
 bool BlueWhaleNotFound = true;
 bool NotRemoved = true;
 
-bool Flag[] = {false, false};
-
 void drive(int leftval, int rightval) {
   char Pins[] = {Ain1, Bin1, Ain2, Bin2, PWMA, PWMB};
   int values[] = {rightval, leftval};
@@ -103,7 +101,7 @@ int ShortestUS() { //Returns the identity number of the US sensor with the short
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  //Serial.begin(9600);
   for (int i = 0; i < sizeof(outPins); i++) {
     pinMode(outPins[i], OUTPUT); //initialize output pins
   }
