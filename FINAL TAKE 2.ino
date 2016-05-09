@@ -29,10 +29,6 @@
 char outPins[] = {Trg2, Ain2, Ain1, Bin1, Bin2, Trg4, Grn, PWMA, PWMB, Red, Trg1, Trg3, Blue,};
 char inPins[] = {Ech2, Ech4, Ech1, Ech3, Meas, Opt2, Opt1};
 
-char IRlist[] = {Opt1, Opt2};
-char UStrg[] = {Trg1, Trg2, Trg3, Trg4};
-char USech[] = {Ech1, Ech2, Ech3, Ech4};
-
 bool MazeNotFound = true;
 bool NotThroughMaze = true;
 bool BlueWhaleNotFound = true;
@@ -68,6 +64,8 @@ void drive(int leftval, int rightval) {
 }
 
 byte checkUS(int identity) { //Returns 0-255 cm distance measured on US
+  char UStrg[] = {Trg1, Trg2, Trg3, Trg4};
+  char USech[] = {Ech1, Ech2, Ech3, Ech4};
   // Identity Numbers:
   // 0 = Front
   // 1 = Left
@@ -102,12 +100,8 @@ int ShortestUS() { //Returns the identity number of the US sensor with the short
 void setup() {
   // put your setup code here, to run once:
   //Serial.begin(9600);
-  for (int i = 0; i < sizeof(outPins); i++) {
-    pinMode(outPins[i], OUTPUT); //initialize output pins
-  }
-  for (int i = 0; i < sizeof(inPins); i++) {
-    pinMode(inPins[i], INPUT); //initialize input  pins
-  }
+  for (int i = 0; i < sizeof(outPins); i++) {pinMode(outPins[i], OUTPUT);} //initialize output pins
+  for (int i = 0; i < sizeof(inPins); i++) {pinMode(inPins[i], INPUT);} //initialize input  pins
 }
 void loop() {
   // put your main code here, to run repeatedly:
